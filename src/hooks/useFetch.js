@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
 
+/**
+ *
+ * @param {string} url The url to fetch from
+ * @param {any} initialData The initial state
+ * @returns An array with 3 elements: data, isLoading, error
+ */
 export default function useFetch(url, initialData) {
   const [data, setData] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
