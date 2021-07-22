@@ -1,25 +1,20 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import useFetch from "../hooks/useFetch";
 //https://pokeapi.co/api/v2/pokemon/:id
 export default function SinglePokemonPage() {
   const { pokemonId } = useParams();
-  const [pokemon, setPokemon] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
-    setIsLoading(true);
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        setPokemon(data);
-        setIsLoading(false);
-      });
-  }, [pokemonId]);
+  const [pokemon, isLoading, error] = useFetch(
+    `https://pokeapi.co/api/v2/pokemon/${pokemonId}`,
+    null
+  );
 
   function renderPokemon() {
     if (isLoading || pokemon === null) {
       return "Loading...";
+    }
+
+    if (error) {
+      return "There was an error fetching, try again";
     }
 
     const { name, sprites } = pokemon;
