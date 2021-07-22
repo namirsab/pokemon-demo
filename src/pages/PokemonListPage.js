@@ -1,22 +1,26 @@
 //https://pokeapi.co/api/v2/pokemon
 
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import useFetch from "../hooks/useFetch";
 
 export default function PokemonListPage() {
-  const [pokemons, setPokemons] = useState([]);
-
-  useEffect(() => {
-    const url = "https://pokeapi.co/api/v2/pokemon";
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        setPokemons(data.results);
-      });
-  }, []);
+  const [data, isLoading, error] = useFetch(
+    "https://pokeapi.co/api/v2/pokemon",
+    {
+      results: [],
+    }
+  );
 
   function renderPokemons() {
-    return pokemons.map((pokemon, index) => {
+    if (isLoading) {
+      return "Loading...";
+    }
+
+    if (error) {
+      return "There was an error fetching, try again";
+    }
+
+    return data.results.map((pokemon, index) => {
       const id = index + 1;
       return (
         <li>
