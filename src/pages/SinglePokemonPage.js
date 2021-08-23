@@ -1,25 +1,32 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
+import useFetch from "../hooks/useFetch";
 //https://pokeapi.co/api/v2/pokemon/:id
 export default function SinglePokemonPage() {
   const { pokemonId } = useParams();
-  const [pokemon, setPokemon] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const history = useHistory();
 
-  useEffect(() => {
-    const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
-    setIsLoading(true);
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        setPokemon(data);
-        setIsLoading(false);
-      });
-  }, [pokemonId]);
+  const [pokemon, isLoading, error] = useFetch(
+    `https://pokeapi.co/api/v2/pokemon/${pokemonId}`,
+    null
+  );
+
+  console.log(history);
+
+  function handleGoBackClick() {
+    history.goBack();
+  }
+
+  function handleGoNextClick() {
+    history.push(`/pokemon/${Number(pokemonId) + 1}`);
+  }
 
   function renderPokemon() {
     if (isLoading || pokemon === null) {
       return "Loading...";
+    }
+
+    if (error) {
+      return "There was an error fetching, try again";
     }
 
     const { name, sprites } = pokemon;
@@ -31,6 +38,8 @@ export default function SinglePokemonPage() {
           src={sprites?.other["official-artwork"]?.front_default}
           alt={`${name}`}
         />
+        <button onClick={handleGoBackClick}>Go Back</button>
+        <button onClick={handleGoNextClick}>Go Next</button>
       </section>
     );
   }
